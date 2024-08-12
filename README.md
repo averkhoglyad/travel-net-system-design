@@ -13,12 +13,12 @@ Homework for [course by System Design](https://balun.courses/courses/system_des
 - 10 000 000 DAU
 - high availability, ~99,95%
 - posts and media are always stored
-- could be seasonality - more users before holidays
+- could be seasonality - more users before holidays (~20% users more)
 - CIS audience only (most text must be in Cyrillic)
 - on average:
-	- each user view about 50 posts every day (includes search and looking through the feeds) with 20 comments each
-	- each 10th user rate one post and write one comment
-	- each 100th user write a new post with ~5 photos
+	- each user view about 50 posts every day (includes search and looking through the feeds) with 20 comments each (search could take up to 3-5 seconds, view post details - 1 second, loading media - maximum 1 second per photo)
+	- each 10th user rate one post and write one comment (max 1 second for both operations)
+	- each 100th user write a new post with ~5 photos (max 1 second for write operations and 1 sec for every image upload)
 ## Basic calculations
 
 ### Entities
@@ -55,7 +55,7 @@ w/traffic: 1.2 * (2.1KB + 5 * 210B + 5 * 2MB) ~= 12MB (data: 3.8KB  + media: 12M
 	each 10th user rate one post and write one comment
 DAU: 10 000 000 / 10
 RPS: 1 000 000 / 86 400 ~= 12
-w/traffic: 12 * 525B ~= 6.5MB
+w/traffic: 12 * 525B ~= 6.5MB/s
 #### Rate Post
 	each 10th user rate one post and write one comment
 DAU: 10 000 000 / 10
@@ -65,31 +65,21 @@ w/traffic: 12 * 17B ~= 204B (can be ignored)
 - upload media on post creation - 12MB/s
 - write comment - 6.5MB/s
 #### Read Posts
-	each user view about 50 posts every day (includes search and looking through the feeds) with 20 comments each
+	each user view about 50 posts every day (includes search and looking through the feeds)
 DAU: 10 000 000
 RPS: 10 000 000 / 86 400 ~= 120
 r/traffic: 
- - data: 120 * (2.1KB + 5 * 210B + 20 * 525B) ~= 120 * 14KB = 1.7MB
- - media: 120 * 5 * 2MB = 1.2GB
-
-### Required resources:
-#### 1 year:
-##### Memory
-Data: 6.5MB * 100 000 * 400 ~= 260TB
-Media: 12MB * 100 000 * 400 ~= 480TB
-
-including AFR (1%):
-Data: 260 TB * 1.1 ~= 300TB
-Media: 480 TB * 1.1 ~= 550TB
-Total: 850 TB (cost ~$25 500)
-##### Traffic:
-Data: 
- - read: 1.7 MB * 100 000 * 400 ~= 68TB
- - write: 6.5MB * 100 000 * 400 ~= 260TB
-Media: 
- - read: 1.2GB * 100 000 * 400 ~= 48 PB
- - write: 12MB * 100 000 * 400 ~= 480 TB
-Total: ~50 PB (cost ~$5M)
-
-
-
+ - data: 120 * 50 * (2.1KB + 5 * 210B) ~= 120 * 50 * 14KB = 1.7MB/s
+ - media: 120 * 50 * 5 * 2MB = 60GB/s
+#### Read Posts' Comments
+	each user view 20 comments for every 50 viewed post
+DAU: 10 000 000
+RPS: 10 000 000 / 86 400 ~= 120
+r/traffic: 
+ - data: 120 * 50 * (20 * 525B) ~= 63MB
+#### Read Rates
+	each user view rate for every 50 viewed post
+DAU: 10 000 000
+RPS: 10 000 000 / 86 400 ~= 120
+r/traffic: 
+ - data: 120 * 50 * 17B ~= 102KB (can be ignored)
