@@ -23,17 +23,18 @@ Homework for [course by System Design](https://balun.courses/courses/system_des
 ## Basic calculations
 
 ### Entities
+#### Location (225B)
+- **id** - int64 - 8B
+- **caption** - 100 Unicode chars ~200B
+- **coordinates** - 2 x double - 8B+8B
+- **avgRate** - 1B (3-4 bits must be enough)
+
 #### Post (~2025B ~= 2.1KB)
 - **id** - int64 - 8B
 - **userId** - int64 - 8B
 - **text** - 1000 Unicode chars ~2000B
 - **locationId** - int64 - 8B
 - **avgRate** - 1B (3-4 bits must be enough)
-
-#### Location (224B)
-- **id** - int64 - 8B
-- **caption** - 100 Unicode chars ~200B
-- **coordinates** - 2 x double - 8B+8B
 
 #### Photo (~210B metadata + ~2MB content)
 - **id** - int64 - 8B
@@ -56,7 +57,7 @@ Homework for [course by System Design](https://balun.courses/courses/system_des
 	each 1000th user create a new location
 DAU: 10 000 000 / 1000
 RPS: 10 000 / 86 400 ~= 0.12
-w/traffic: 0.12 * 224B ~= 22B
+w/traffic: 0.12 * 225B ~= 23B
 
 #### Create Post
 	each 100th user write a new post with 5 photos
