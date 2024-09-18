@@ -1,0 +1,779 @@
+openapi: 3.1.0
+info:
+  title: Travel Social Net API
+  version: 1.0.0
+
+tags:
+  - name: Media
+  - name: Locations
+  - name: Posts
+  - name: Subscriptions
+  - name: Feed
+
+paths:
+  ### Media
+  /media:
+    post:
+      operationId: uploadMedia
+      summary: Upload media file (photo)
+      tags:
+        - Media
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        201:
+          description: Uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaUploadResponse'
+        400:
+          description: Bad Request
+        409:
+          description: Conflict
+        500:
+          description: Server error
+      security:
+        - openIdConnect: []
+
+  /media/{id}:
+    get:
+      operationId: downloadMedia
+      summary: Download media file (photo)
+      tags:
+        - Media
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream: {}
+        404:
+          description: Not found
+        500:
+          description: Server error
+
+  ### Locations
+  /locations:
+    get:
+      operationId: listLocations
+      summary: List Locations
+      tags:
+        - Locations
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Coordinates'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationListResponse'
+        400:
+          description: Invalid params
+        500:
+          description: Server error
+    post:
+      operationId: createLocations
+      summary: Create Locations
+      tags:
+        - Locations
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDetailsResponse'
+        400:
+          description: Invalid data
+        409:
+          description: Conflict
+        500:
+          description: Server error
+      security:
+        - openIdConnect: []
+
+  /locations/{id}:
+    get:
+      operationId: getLocation
+      summary: Get Location details
+      tags:
+        - Locations
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationDetailsResponse'
+        404:
+          description: Not found
+        500:
+          description: Server error
+
+  ### Posts
+  /posts:
+    get:
+      operationId: listPosts
+      summary: List Posts
+      tags:
+        - Posts
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Cursor'
+        - name: location
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostListResponse'
+        400:
+          description: Invalid params
+        500:
+          description: Internal server error
+    post:
+      operationId: createPost
+      summary: Create Post
+      tags:
+        - Posts
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+      requestBody:
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreateRequest'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetailsResponse'
+        400:
+          description: Invalid data
+        409:
+          description: Conflict
+        500:
+          description: Internal server error
+      security:
+        - openIdConnect: []
+
+  /posts/{id}:
+    get:
+      tags:
+        - Posts
+      operationId: getPosts
+      summary: Get Post details
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostDetailsResponse'
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+
+  ### Rate
+  /posts/{id}/rate:
+    put:
+      operationId: savePostRate
+      summary: Save Post Rate
+      tags:
+        - Posts
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostRatingRequest'
+      responses:
+        204:
+          description: OK
+        400:
+          description: Invalid data
+        404:
+          description: Not found
+        409:
+          description: Conflict
+        500:
+          description: Internal server error
+      security:
+        - openIdConnect: [ ]
+
+    delete:
+      operationId: dropPostRate
+      summary: Drop Post Rate
+      tags:
+        - Posts
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not found
+        409:
+          description: Conflict
+        500:
+          description: Internal server error
+      security:
+        - openIdConnect: []
+
+  ### Comments
+  /posts/{id}/comments:
+    get:
+      operationId: listPostComments
+      summary: List Post's Comments
+      tags:
+        - Posts
+      parameters:
+        - $ref: '#/components/parameters/Id'
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentsListResponse'
+        400:
+          description: Invalid params
+        404:
+          description: Not found
+        500:
+          description: Internal server error
+    post:
+      operationId: createPostComment
+      summary: Create Post's Comment
+      tags:
+       - Posts
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+        - $ref: '#/components/parameters/Id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentCreateRequest'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentDetailsResponse'
+        400:
+          description: Invalid data
+        404:
+          description: Not found
+        409:
+          description: Conflict
+        500:
+          description: Internal server error
+      security:
+        - openIdConnect: []
+
+  ### Subscription
+  /subscriptions:
+    get:
+      operationId: listSubscriptions
+      summary: List Subscriptions
+      tags:
+        - Subscriptions
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubscriptionListResponse'
+        400:
+          description: Invalid params
+        500:
+          description: Server error
+      security:
+        - openIdConnect: []
+
+    put:
+      operationId: subscribe
+      summary: Subscribe
+      tags:
+        - Subscriptions
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUserRefRequest'
+      responses:
+        204:
+          description: OK
+        400:
+          description: Invalid data
+        409:
+          description: Conflict
+        500:
+          description: Server error
+      security:
+        - openIdConnect: []
+
+    delete:
+      operationId: unsubscribe
+      summary: Unsubscribe
+      tags:
+        - Subscriptions
+      parameters:
+        - $ref: '#/components/parameters/IdempotenceKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionUserRefRequest'
+      responses:
+        204:
+          description: OK
+        400:
+          description: Invalid data
+        409:
+          description: Conflict
+        500:
+          description: Server error
+      security:
+        - openIdConnect: []
+
+  ### Feed
+  /feed:
+    get:
+      operationId: getFeed
+      summary: Get Feed
+      tags:
+        - Feed
+      parameters:
+        - $ref: '#/components/parameters/MaxResults'
+        - $ref: '#/components/parameters/Cursor'
+        - name: user
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedResponse'
+        400:
+          description: Invalid params
+        500:
+          description: Server error
+      security:
+        - openIdConnect: []
+
+components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    IdempotenceKey:
+      name: X-Idempotence-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+    MaxResults:
+      name: maxResults
+      in: query
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 1000
+        default: 25
+
+    Coordinates:
+      name: ll
+      in: query
+      required: false
+      schema:
+        explode: false
+        style: form
+        type: array
+        items:
+          type: number
+          format: double
+        minItems: 2
+        maxItems: 2
+        examples:
+          - 55.7522,37.6156
+
+  schemas:
+    ### Common
+    ListResponse:
+      type: object
+      properties:
+        meta:
+          type: object
+          properties:
+            maxResults:
+              type: integer
+              format: int32
+              min: 1
+              max: 1000
+            total:
+              type: integer
+              format: int64
+              min: 0
+            next:
+              type: string
+              description: Cursor to next portion
+            prev:
+              type: string
+              description: Cursor to prev portion
+        data:
+          type: array
+      required:
+        - meta
+        - data
+
+    Coordinates:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+          examples:
+            - 55.7522
+        lon:
+          type: number
+          format: double
+          examples:
+            - 37.6156
+      required:
+      - lat
+      - lon
+
+    IdRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+      required:
+        - id
+
+    IdentifiedAuditable:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        createdBy:
+          $ref: '#/components/schemas/UserRef'
+        createdAt:
+          type: string
+          format: 'date-time'
+      required:
+        - id
+        - createdBy
+        - createdAt
+
+    UserRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    ### Media
+    MediaUploadResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+      required:
+        - id
+
+    MediaDetails:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        caption:
+          type: string
+          maxLength: 255
+      required:
+        - id
+        - caption
+
+    ### Locations
+    BaseLocation:
+      type: object
+      properties:
+        caption:
+          type: string
+          maxLength: 255
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+      required:
+        - caption
+        - coordinates
+
+    LocationDetails:
+      allOf:
+        - $ref: '#/components/schemas/BaseLocation'
+        - $ref: '#/components/schemas/IdentifiedAuditable'
+        - type: object
+          properties:
+            avgRate:
+              type: number
+              format: float
+              default: 0
+              minimum: 0
+              maximum: 5
+          required:
+            - avgRate
+
+    LocationListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/LocationDetails'
+          required:
+            - data
+
+    LocationCreateRequest:
+      # To make request customizable
+      allOf:
+        - $ref: '#/components/schemas/BaseLocation'
+
+    LocationDetailsResponse:
+      # To make response customizable
+      allOf:
+        - $ref: '#/components/schemas/LocationDetails'
+
+    LocationRef:
+      allOf:
+        - $ref: '#/components/schemas/BaseLocation'
+        - type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+
+    ### Posts
+    BasePost:
+      type: object
+      properties:
+        text:
+          type: string
+          maxLength: 255
+        photos:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                format: int64
+              caption:
+                type: string
+            required:
+              - id
+              - caption
+      required:
+        - text
+        - photos
+
+    PostDetails:
+      allOf:
+        - $ref: '#/components/schemas/BasePost'
+        - $ref: '#/components/schemas/IdentifiedAuditable'
+        - type: object
+          properties:
+            location:
+              $ref: '#/components/schemas/LocationRef'
+            avgRate:
+              type: number
+              format: float
+              default: 0
+              minimum: 0
+              maximum: 5
+          required:
+            - location
+            - avgRate
+
+    PostListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/PostDetails'
+          required:
+            - data
+
+    PostCreateRequest:
+      allOf:
+        - $ref: '#/components/schemas/BasePost'
+        - type: object
+          properties:
+            location:
+              $ref: '#/components/schemas/IdRef'
+          required:
+            - location
+
+    PostDetailsResponse:
+      # To make response customizable
+      allOf:
+        - $ref: '#/components/schemas/PostDetails'
+
+    ### Rate
+    PostRatingRequest:
+      type: object
+      properties:
+        rate:
+          type: integer
+          minimum: 0
+          maximum: 5
+      required:
+        - rate
+
+    ### Comments
+    BaseComment:
+      type: object
+      properties:
+        text:
+          type: string
+          maxLength: 1000
+      required:
+        - text
+
+    CommentDetails:
+      allOf:
+        - $ref: '#/components/schemas/BaseComment'
+        - $ref: '#/components/schemas/IdentifiedAuditable'
+
+    CommentsListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/CommentDetails'
+          required:
+            - data
+
+    CommentCreateRequest:
+      # To make request customizable
+      allOf:
+        - $ref: '#/components/schemas/BaseComment'
+
+    CommentDetailsResponse:
+      # To make response customizable
+      allOf:
+        - $ref: '#/components/schemas/CommentDetails'
+
+    ### Subscriptions
+    SubscriptionListResponse:
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserRef'
+          required:
+            - data
+
+    SubscriptionUserRefRequest:
+      allOf:
+        - $ref: '#/components/schemas/UserRef'
+
+    ### Feed
+    FeedResponse:
+      allOf:
+        - $ref: '#/components/schemas/ListResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/PostDetails'
+          required:
+            - data
+
+  securitySchemes:
+    openIdConnect:
+      type: openIdConnect
+      openIdConnectUrl: https://sso.server/.well-known/openid-configuration
