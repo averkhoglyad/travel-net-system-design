@@ -8,7 +8,7 @@ Homework for [course by System Design](https://balun.courses/courses/system_des
 - user can subscribe to other users to keep track on their activity
 - user can view posts feed of the other user he subscribed
 - user can view posts feed of the other user
-- search for popular see sides and view posts about it
+- search for popular sights and view posts about it
 ### Non-functional requirements:
 - 10 000 000 DAU
 - high availability, ~99,95%
