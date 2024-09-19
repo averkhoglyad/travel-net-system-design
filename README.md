@@ -56,13 +56,17 @@ Homework for [course by System Design](https://balun.courses/courses/system_des
 #### Create Location
 	each 1000th user create a new location
 DAU: 10 000 000 / 1000
+
 RPS: 10 000 / 86 400 ~= 0.12
+
 w/traffic: 0.12 * 225B ~= 23B
 
 #### Create Post
 	each 100th user write a new post with 5 photos
 DAU: 10 000 000 / 100
+
 RPS: 100 000 / 86 400 ~= 1.2
+
 w/traffic: 1.2 * (2.1KB + 5 * 210B + 5 * 2MB) ~= 12MB (data: 3.8KB  + media: 12MB)
 
 #### Create Comment
