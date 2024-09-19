@@ -68,13 +68,17 @@ w/traffic: 1.2 * (2.1KB + 5 * 210B + 5 * 2MB) ~= 12MB (data: 3.8KB  + media: 12M
 #### Create Comment
 	each 10th user rate one post and write one comment
 DAU: 10 000 000 / 10
+
 RPS: 1 000 000 / 86 400 ~= 12
+
 w/traffic: 12 * 525B ~= 6.5MB/s
 
 #### Rate Post
 	each 10th user rate one post and write one comment
 DAU: 10 000 000 / 10
+
 RPS: 1 000 000 / 86 400 ~= 12
+
 w/traffic: 12 * 17B ~= 204B (can be ignored)
 
 ##### The highest workload among write operations: 
@@ -84,7 +88,9 @@ w/traffic: 12 * 17B ~= 204B (can be ignored)
 #### Read Posts
 	each user view about 50 posts every day (includes search and looking through the feeds)
 DAU: 10 000 000
+
 RPS: 10 000 000 / 86 400 ~= 120
+
 r/traffic: 
  - data: 120 * 50 * (2.1KB + 5 * 210B) ~= 120 * 50 * 14KB = 1.7MB/s
  - media: 120 * 50 * 5 * 2MB = 60GB/s
@@ -92,13 +98,17 @@ r/traffic:
 #### Read Posts' Comments
 	each user view 20 comments for every 50 viewed post
 DAU: 10 000 000
+
 RPS: 10 000 000 / 86 400 ~= 120
+
 r/traffic: 
  - data: 120 * 50 * (20 * 525B) ~= 63MB
 
 #### Read Rates
 	each user view rate for every 50 viewed post
 DAU: 10 000 000
+
 RPS: 10 000 000 / 86 400 ~= 120
+
 r/traffic: 
  - data: 120 * 50 * 17B ~= 102KB (can be ignored)
