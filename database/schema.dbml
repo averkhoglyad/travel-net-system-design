@@ -12,7 +12,8 @@ Table location {
   caption varchar(255)
   lat double
   lon double
-  rate_total bigint [note: 'For easy refresh and calculation avarage value']
+  geohash int
+  rate_total bigint [note: 'For easy refreshing and calculation avarage value']
   rates_count bigint
   create_at timestamp
   created_by bigint 
@@ -22,7 +23,7 @@ Table post {
   id bigint [primary key]
   text varchar(1000)
   location_id bigint
-  rate_total bigint [note: 'For easy refresh and calculation avarage value']
+  rate_total bigint [note: 'For easy refreshing and calculation avarage value']
   rates_count bigint
   create_at timestamp
   created_by bigint 
