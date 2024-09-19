@@ -135,3 +135,71 @@ r/traffic:
  - download post media - 60GB/s
  - read posts - 1.7MB/s
  - read comments - 1.5MB/s
+
+### Required resources (1 year):
+
+#### Avarage estimate
+##### Memory
+Data: 11KB * 100 000 * 400 ~= 440GB
+Media: 12MB * 100 000 * 400 ~= 480TB
+
+including AFR (1%):
+Data: 440GB * 1.1 ~= 485GB
+Media: 480TB * 1.1 ~= 550TB
+
+Total: 550TB
+
+##### Traffic:
+Data: 
+ - read: 3.2MB * 100 000 * 400 ~= 128TB
+ - write: 11KB * 100 000 * 400 ~= 260GB
+Media: 
+ - read: 60GB * 100 000 * 400 ~= 2 400PB
+ - write: 12MB * 100 000 * 400 ~= 480TB
+Total: ~2 400 PB
+
+#### Disks
+##### Media (photos)
+
+###### **Hot media (last 2 monthes):**
+
+*Using SSD (nVME)*
+
+**Сapacity** = 550TB / 6 = 92TB
+
+**Disks_for_capacity** = 92TB / 30TB ~= 3.1
+
+**Disks_for_throughput** = 72GB/s / 3GB/s = 24
+
+**Disks_for_iops** = 30 000 / 10 000 = 3
+
+**Disks** = max(ceil(3.1), ceil(20), ceil(3)) = 24
+
+###### **Cold media (all medias):**
+	We expect that there will be 5 times fewer requests for cold photos
+
+*Using HDD:*
+
+**Сapacity** = 550TB
+
+**Disks_for_capacity** = 550TB / 32TB = 17.2
+
+**Disks_for_throughput** = 14.4GB/s / 0.1GB/s = 144
+
+**Disks_for_iops** = 6 000 / 100 = 60
+
+**Disks** = max(ceil(17.2), ceil(144), ceil(60)) = 144
+
+##### Data
+
+*Using SSD (SATA)*
+
+**Сapacity** = 485GB
+
+**Disks_for_capacity** = 485GB / 100TB = 0
+
+**Disks_for_throughput** = 3.2MB/s / 500MB/s = 0
+
+**Disks_for_iops** = 7500 / 1 000 = 7.5
+
+**Disks** = max(ceil(0), ceil(0), ceil(7.5)) = 8
