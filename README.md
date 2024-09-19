@@ -111,4 +111,4 @@ DAU: 10 000 000
 RPS: 10 000 000 / 86 400 ~= 120
 
 r/traffic: 
- - data: 120 * 50 * 17B ~= 102KB (can be ignored)
+ - data: 120 * 50 * 17B ~= 102KB
