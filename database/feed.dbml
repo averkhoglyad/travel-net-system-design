@@ -1,1 +1,6 @@
 // In-memory database (e.g. Tarantool, Redis, Dragonfly, etc)
+// Replication:
+// - async master-slave
+// - replication factor 2
+// Sharding
+// - key based by user id

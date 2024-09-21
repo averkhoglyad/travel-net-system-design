@@ -179,6 +179,11 @@ Total: ~485TB
 
 **Disks** = max(ceil(2.7), ceil(24), ceil(3)) = 24
 
+**Hosts** = disks / disks_per_host = 24 / 1
+
+**Hosts_with_replication** = hosts * replication_factor = 24 * 2 = 48
+
+
 ###### **Cold media (all medias):**
 	We expect that there will be 5 times fewer requests for cold photos
 
@@ -193,6 +198,10 @@ Total: ~485TB
 **Disks_for_iops** = 6 000 / 100 = 60
 
 **Disks** = max(ceil(15.2), ceil(144), ceil(60)) = 144
+
+**Hosts** = disks / disks_per_host = 144 / 1
+
+**Hosts_with_replication** = hosts * replication_factor = 144 * 2 = 288
 
 #### Posts service
 ##### Traffic:
@@ -220,6 +229,9 @@ including AFR (1%): ~150GB
 
 **Disks** = max(ceil(0.002), ceil(0.05), ceil(7.5)) = 8
 
+**Hosts** = disks / disks_per_host = 8 / 1
+
+**Hosts_with_replication** = hosts * replication_factor = 8 * 2 = 16
 
 #### Reactions service
 
@@ -245,6 +257,10 @@ including AFR (1%): ~972GB
 
 **Disks** = max(ceil(0.01), ceil(0.01), ceil(0.25)) = 1
 
+**Hosts** = disks / disks_per_host = 1
+
+**Hosts_with_replication** = hosts * replication_factor = 1 * 2 = 2
+
 #### Subscriptions service
 
 ##### Traffic:
@@ -266,3 +282,6 @@ including AFR (1%): ~360GB
 
 **Disks** = max(ceil(0.01), ceil(0.01), ceil(0.12)) = 1
 
+**Hosts** = disks / disks_per_host = 1
+
+**Hosts_with_replication** = hosts * replication_factor = 1 * 2 = 2
