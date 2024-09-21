@@ -26,10 +26,13 @@ Boundary(media, "Media", "Media files storage") {
 
 Boundary(posts, "Posts", "Posts and Locations") {
     Container(post_service, 'Post Service', "application")
+    Container(post_arch_worker, 'Archiver', "cron-worker")
     ContainerDb(posts_db_hot, "Posts DB (hot)", "document", "MongoDB", $sprite="mongodb")
     ContainerDb(posts_db_cold, "Posts DB (cold)", "document", "MongoDB", $sprite="mongodb")
     Rel(post_service, posts_db_hot, "", "")
     Rel(post_service, posts_db_cold, "", "")
+    Rel(post_arch_worker, posts_db_hot, "", "")
+    Rel(post_arch_worker, posts_db_cold, "", "")
 }
 
 
