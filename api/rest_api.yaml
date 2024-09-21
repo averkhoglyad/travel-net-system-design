@@ -642,7 +642,7 @@ components:
       properties:
         text:
           type: string
-          maxLength: 255
+          maxLength: 1000
         photos:
           type: array
           items:
