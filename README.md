@@ -37,7 +37,7 @@ It could be used ready-made implementation of the SSO service (e.g. Keycloak) or
 ### Critical flows and subsystem details
 
 #### Create Post
-![Create Post](/uml/c4-l2-create_post.png "Create Post")
+![Create Post](/puml/c4-l2-create_post.png "Create Post")
 
 User's client upload images to the media service first with expiration date +1 day. File storage will remove file automatically if expiration date will be still defined 
 (e,g, if creation will be interrupted or failed). Next client call post create method. On successful creation post service notify media service to remove expiration date.
@@ -46,19 +46,19 @@ the inner nested array of the media details. We assume that 80% of the posts use
 db and after the 2 monthes they will be removed from the hot db and persisted in the cold db.
 
 #### Comments and Rates
-![Comments and Rates](/uml/c4-l2-post_reactions.png "Comments and Rates")
+![Comments and Rates](/puml/c4-l2-post_reactions.png "Comments and Rates")
 
 User can write comments and rate posts and reactions service is responsible for this functionality (it could be devided into separated services but I didn't find the reason for now).
 Rates are persisted and requested from posts so it's not needed to update rate in the feed on any reaction. Reaction service notify psot service about avarage rate updates through
 message queue. It could be aggregated and debounced.
 
 #### Subscription
-![Subscription](/uml/c4-l2-subscription.png "Subscription")
+![Subscription](/puml/c4-l2-subscription.png "Subscription")
 
 Subscription service keep user-to-user subscriptions and statistics how many users has subscriptions and followers. THis information is used to detect celebrities.
 
 #### Feed
-![Feed](/uml/c4-l2-feed.png "Feed")
+![Feed](/puml/c4-l2-feed.png "Feed")
 
 Feed service is responsible for building user's feeds. Feed service keeps full posts for every feed. Celebrity users' posts are kept as the separated list,
 service mixes them in the prepared feed in the runtime. We assume that 80% users view less than 50 posts in the feed, if user try to read more, feed service 
