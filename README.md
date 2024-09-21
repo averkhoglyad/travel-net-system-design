@@ -26,8 +26,7 @@ Travel Social Net is a social network for travelers.
 ## Design overview
 
 ### Level 1. High level design
-
-<img alt="High level design" src="puml/c4-l1.png" />
+![High level design](/puml/c4-l1.png "High level design")
 
 ### Level 2. Subsystems design
 
