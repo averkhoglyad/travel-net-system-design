@@ -23,6 +23,16 @@ Travel Social Net is a social network for travelers.
 	- each 100th user write a new post with ~5 photos (max 1 second for write operations and 1 sec for every image upload)
 	- each 1000th user register a new location
 
+## Design overview
+
+### Level 1. High level design
+
+<img alt="Full scheme" src="puml/c4-l1.png" />
+
+### Level 2. Subsystems design
+
+<img alt="Full scheme" src="puml/c4-l2.png" />
+
 ## Basic calculations
 
 ### Entities
