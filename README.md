@@ -136,20 +136,8 @@ r/traffic:
  - read posts - 1.7MB/s
  - read comments - 1.5MB/s
 
-### Required resources (1 year):
-
-#### Avarage estimate
-##### Memory
-Data: 11KB * 100 000 * 400 ~= 440GB
-Media: 12MB * 100 000 * 400 ~= 480TB
-
-including AFR (1%):
-Data: 440GB * 1.1 ~= 485GB
-Media: 480TB * 1.1 ~= 550TB
-
-Total: 550TB
-
-##### Traffic:
+### Avarage resources estimate for 1 year (full system)
+#### Traffic:
 Data: 
  - read: 3.2MB * 100 000 * 400 ~= 128TB
  - write: 11KB * 100 000 * 400 ~= 260GB
@@ -158,48 +146,123 @@ Media:
  - write: 12MB * 100 000 * 400 ~= 480TB
 Total: ~2 400 PB
 
-#### Disks
-##### Media (photos)
+#### Memory
+Data: 11KB * 100 000 * 400 ~= 440GB
+Media: 12MB * 100 000 * 400 ~= 480TB
 
+including AFR (1%):
+Data: 440GB * 1.01 ~= 445GB
+Media: 480TB * 1.01 ~= 484.5TB
+
+Total: ~485TB
+
+### Required resources for 1 year by services:
+
+#### Media
+
+##### Traffic:
+ - read: 60GB * 100 000 * 400 ~= 2 400PB
+ - write: 12MB * 100 000 * 400 ~= 480TB
+
+##### Memory
 ###### **Hot media (last 2 monthes):**
 
 *Using SSD (nVME)*
 
-**Сapacity** = 550TB / 6 = 92TB
+**Сapacity** = 485TB / 6 = 81TB
 
-**Disks_for_capacity** = 92TB / 30TB ~= 3.1
+**Disks_for_capacity** = 81TB / 30TB ~= 2.7
 
 **Disks_for_throughput** = 72GB/s / 3GB/s = 24
 
 **Disks_for_iops** = 30 000 / 10 000 = 3
 
-**Disks** = max(ceil(3.1), ceil(20), ceil(3)) = 24
+**Disks** = max(ceil(2.7), ceil(24), ceil(3)) = 24
 
 ###### **Cold media (all medias):**
 	We expect that there will be 5 times fewer requests for cold photos
 
 *Using HDD:*
 
-**Сapacity** = 550TB
+**Сapacity** = 485TB
 
-**Disks_for_capacity** = 550TB / 32TB = 17.2
+**Disks_for_capacity** = 550TB / 32TB = 15.2
 
 **Disks_for_throughput** = 14.4GB/s / 0.1GB/s = 144
 
 **Disks_for_iops** = 6 000 / 100 = 60
 
-**Disks** = max(ceil(17.2), ceil(144), ceil(60)) = 144
+**Disks** = max(ceil(15.2), ceil(144), ceil(60)) = 144
 
-##### Data
+#### Posts service
+##### Traffic:
+Traffic:
+ - write:
+   - Posts: 1.2 * (2KB + 5 * 0.5KB) ~= 3.6KB/sec
+   - Locations: 0.2 * 0.25KB ~= 0.05KB/sec
+   - **Total**: ~3.7KB/sec
+ - read: 
+   - Posts: 120 * 50 * 3.6KB ~= 21.6MB/s
+   - Locations: 1200 * 0.25KB ~= 300KB/sec
+   - **Total**: ~22MB/s
 
+##### Memory
 *Using SSD (SATA)*
 
-**Сapacity** = 485GB
+**Сapacity**: 3.7KB * 100 000 * 400 ~= 148GB
+including AFR (1%): ~150GB
 
-**Disks_for_capacity** = 485GB / 100TB = 0
+**Disks_for_capacity** = 150GB / 100TB = 0.002
 
-**Disks_for_throughput** = 3.2MB/s / 500MB/s = 0
+**Disks_for_throughput** = 26MB/s / 500MB/s = 0.05
 
 **Disks_for_iops** = 7500 / 1 000 = 7.5
 
-**Disks** = max(ceil(0), ceil(0), ceil(7.5)) = 8
+**Disks** = max(ceil(0.002), ceil(0.05), ceil(7.5)) = 8
+
+
+#### Reactions service
+
+##### Traffic:
+Traffic:
+ - write: 12 * 2KB ~= 24KB/sec
+ - read: 120 * 20 * 2KB ~= 5MB/sec
+
+##### Memory
+*Using SSD (SATA)*
+
+**Сapacity**: 
+ - reactions: 24KB * 100 000 * 400 ~= 960GB
+ - stats: (1.2 * 24B + 0.2 * 32B) * 100 000 * 400 ~= 1.5GB
+ - **Total**: 962GB
+including AFR (1%): ~972GB
+
+**Disks_for_capacity** = 972GB / 100TB = 0.01
+
+**Disks_for_throughput** = 5.25MB/s / 500MB/s = 0.01
+
+**Disks_for_iops** = 240 / 1 000 = 0.25
+
+**Disks** = max(ceil(0.01), ceil(0.01), ceil(0.25)) = 1
+
+#### Subscriptions service
+
+##### Traffic:
+Traffic:
+ - write: 12 * 16B ~= 192B/sec
+ - read: 120 * 16B ~= 2KB/sec
+
+##### Memory
+*Using SSD (SATA)*
+
+**Сapacity**: 200M * 24B + 200M * 100 * 16B ~= 325GB
+including AFR (1%): ~360GB
+
+**Disks_for_capacity** = 360GB / 100TB = 0.004
+
+**Disks_for_throughput** = 2.2KBMB/s / 500MB/s = 0.0..1
+
+**Disks_for_iops** = 123 / 1 000 = 0.12
+
+**Disks** = max(ceil(0.01), ceil(0.01), ceil(0.12)) = 1
+
