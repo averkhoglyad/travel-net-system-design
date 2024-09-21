@@ -1,0 +1,34 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table location [note: 'For easy refreshing and calculation avarage value'] {
+  id bigint [primary key]
+  rate_total bigint
+  rates_count bigint
+}
+
+Table post [note: 'For easy refreshing and calculation avarage value'] {
+  id bigint [primary key]
+  location_id bigint
+  rate_total bigint
+  rates_count bigint
+}
+
+Table comment {
+  id bigint [primary key]
+  text varchar(1000)
+  post_id bigint
+  create_at timestamp
+  created_by bigint 
+}
+
+Table rate {
+  post_id bigint [primary key]
+  created_by bigint [primary key]
+  value int
+  create_at timestamp
+}
+
+Ref: post.location_id > location.id
+Ref: post.id < comment.post_id
+Ref: post.id < rate.post_id
