@@ -53,7 +53,7 @@ Rates are persisted and requested from posts so it's not needed to update rate i
 message queue. It could be aggregated and debounced.
 
 #### Subscription
-![Subscription](/puml/c4-l2-subscription.png "Subscription")
+![Subscription](/puml/c4-l2-subscriptions.png "Subscription")
 
 Subscription service keep user-to-user subscriptions and statistics how many users has subscriptions and followers. THis information is used to detect celebrities.
 
