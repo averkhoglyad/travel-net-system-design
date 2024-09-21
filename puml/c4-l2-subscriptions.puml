@@ -1,0 +1,33 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define COMMICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons
+
+!include DEVICONS/postgresql.puml
+!include DEVICONS/redis.puml
+!include DEVICONS/mongodb.puml
+
+!include COMMICONS/common.puml
+!include COMMICONS/font-awesome-6/database.puml
+
+Person(user, 'User')
+
+Boundary(subscriptions, "Subscriptions") {
+    Container(subscriptions_service, 'Subscriptions Service', "application")
+    ContainerDb(subscriptions_db, "Subscriptions DB", "relational", "Postgresql", $sprite="postgresql")
+    Rel(subscriptions_service, subscriptions_db, "", "")
+}
+
+Boundary(feeds, "Feeds") {
+    Container(feed_service, 'Feed Service', "application")
+}
+
+ContainerQueue(subscriptions_queue, "Subscriptions Queue", "Kafka")
+
+Rel(user, subscriptions_service, "", "")
+
+Rel(subscriptions_service, subscriptions_queue, "", "")
+Rel(feed_service, subscriptions_queue, "", "")
+
+@enduml

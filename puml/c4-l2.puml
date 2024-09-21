@@ -26,8 +26,10 @@ Boundary(media, "Media", "Media files storage") {
 
 Boundary(posts, "Posts", "Posts and Locations") {
     Container(post_service, 'Post Service', "application")
-    ContainerDb(posts_db, "Posts DB", "document", "MongoDB", $sprite="mongodb")
-    Rel(post_service, posts_db, "", "")
+    ContainerDb(posts_db_hot, "Posts DB (hot)", "document", "MongoDB", $sprite="mongodb")
+    ContainerDb(posts_db_cold, "Posts DB (cold)", "document", "MongoDB", $sprite="mongodb")
+    Rel(post_service, posts_db_hot, "", "")
+    Rel(post_service, posts_db_cold, "", "")
 }
 
 
@@ -55,7 +57,7 @@ Boundary(feeds, "Feeds") {
 ContainerQueue(post_media_queue, "Post-Media Queue", "Kafka", $sprite='apachekafka')
 ContainerQueue(posts_queue, "Posts Queue", "Kafka")
 ContainerQueue(subscriptions_queue, "Subscriptions Queue", "Kafka")
-
+ContainerQueue(reactions_queue, "Reactions Queue", "Kafka")
 
 Rel(gateway, media_service, "", "")
 Rel(gateway, post_service, "", "")
@@ -67,9 +69,12 @@ Rel(post_service, post_media_queue, "", "")
 Rel(media_service, post_media_queue, "", "")
 Rel(reactions_service, posts_queue, "", "")
 Rel(post_service, posts_queue, "", "")
+Rel(reactions_service, reactions_queue, "", "")
+Rel(post_service, reactions_queue, "", "")
 
 Rel(subscriptions_service, subscriptions_queue, "", "")
 Rel(feed_service, subscriptions_queue, "", "")
 Rel(feed_service, posts_queue, "", "")
 Rel(feed_service, post_service, "Get Posts when user feed is empty", "sync")
+
 @enduml

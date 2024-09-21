@@ -1,0 +1,39 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define COMMICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons
+
+!include DEVICONS/postgresql.puml
+!include DEVICONS/redis.puml
+!include DEVICONS/mongodb.puml
+
+!include COMMICONS/common.puml
+!include COMMICONS/font-awesome-6/database.puml
+
+Person(user, 'User')
+
+Boundary(reactions, "Reactions", "Comments and Rates") {
+    Container(reactions_service, 'Reactions Service', "application")
+    ContainerDb(reactions_db, "Reactions DB", "relational", "Postgresql", $sprite="postgresql")
+    Rel(reactions_service, reactions_db, "", "")
+}
+
+Boundary(posts, "Posts", "Posts and Locations") {
+    Container(post_service, 'Post Service', "application")
+}
+
+
+ContainerQueue(posts_queue, "Posts Queue", "Kafka")
+ContainerQueue(reactions_queue, "Reactions Queue", "Kafka")
+
+Rel(user, post_service, "", "")
+Rel(user, reactions_service, "", "")
+
+Rel(reactions_service, posts_queue, "", "")
+Rel(post_service, posts_queue, "", "")
+
+Rel(reactions_service, reactions_queue, "", "")
+Rel(post_service, reactions_queue, "", "")
+
+@enduml

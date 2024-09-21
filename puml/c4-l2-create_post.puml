@@ -1,0 +1,40 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define COMMICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons
+
+!include DEVICONS/postgresql.puml
+!include DEVICONS/redis.puml
+!include DEVICONS/mongodb.puml
+
+!include COMMICONS/common.puml
+!include COMMICONS/font-awesome-6/database.puml
+
+Person(user, 'User')
+
+Boundary(media, "Media", "Media files storage") {
+    Container(media_service, 'Media Service', "application")
+    ContainerDb(media_storage, "Medias DB", "binary", "S3-like file storage", $sprite="database")
+    Rel(media_service, media_storage, "", "")
+}
+
+Boundary(posts, "Posts", "Posts and Locations") {
+    Container(post_service, 'Post Service', "application")
+    ContainerDb(posts_db_hot, "Posts DB (hot)", "document", "MongoDB", $sprite="mongodb")
+    ContainerDb(posts_db_cold, "Posts DB (cold)", "document", "MongoDB", $sprite="mongodb")
+    Rel(post_service, posts_db_hot, "", "")
+    Rel(post_service, posts_db_cold, "", "")
+}
+
+ContainerQueue(post_media_queue, "Post-Media Queue", "Kafka", $sprite='apachekafka')
+ContainerQueue(posts_queue, "Posts Queue", "Kafka")
+
+Rel(user, media_service, "", "")
+Rel(user, post_service, "", "")
+
+Rel(post_service, post_media_queue, "", "")
+Rel(media_service, post_media_queue, "", "")
+Rel(post_service, posts_queue, "", "")
+
+@enduml

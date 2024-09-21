@@ -1,0 +1,43 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define COMMICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons
+
+!include DEVICONS/postgresql.puml
+!include DEVICONS/redis.puml
+!include DEVICONS/mongodb.puml
+
+!include COMMICONS/common.puml
+!include COMMICONS/font-awesome-6/database.puml
+
+Person(user, 'User')
+
+Boundary(feeds, "Feeds") {
+    Container(feed_service, 'Feed Service', "application")
+    ContainerDb(feed_db, "Feed DB", "in-memory", "Redis", $sprite="redis")
+    Rel(feed_service, feed_db, "", "")
+}
+
+Boundary(subscriptions, "Subscriptions") {
+    Container(subscriptions_service, 'Subscriptions Service', "application")
+}
+
+
+Boundary(posts, "Posts", "Posts and Locations") {
+    Container(post_service, 'Post Service', "application")
+}
+
+ContainerQueue(posts_queue, "Posts Queue", "Kafka")
+ContainerQueue(subscriptions_queue, "Subscriptions Queue", "Kafka")
+
+Rel(user, feed_service, "", "")
+
+Rel(post_service, posts_queue, "", "")
+
+Rel(subscriptions_service, subscriptions_queue, "", "")
+Rel(feed_service, subscriptions_queue, "", "")
+Rel(feed_service, posts_queue, "", "")
+Rel(feed_service, post_service, "Get Posts when user feed is empty", "sync")
+
+@enduml
