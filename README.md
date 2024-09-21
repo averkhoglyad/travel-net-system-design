@@ -179,6 +179,8 @@ Total: ~485TB
 
 **Disks** = max(ceil(2.7), ceil(24), ceil(3)) = 24
 
+**considering the replication x2:** = 48
+
 ###### **Cold media (all medias):**
 	We expect that there will be 5 times fewer requests for cold photos
 
@@ -193,6 +195,8 @@ Total: ~485TB
 **Disks_for_iops** = 6 000 / 100 = 60
 
 **Disks** = max(ceil(15.2), ceil(144), ceil(60)) = 144
+
+**considering the replication x2:** = 288
 
 #### Posts service
 ##### Traffic:
@@ -220,6 +224,7 @@ including AFR (1%): ~150GB
 
 **Disks** = max(ceil(0.002), ceil(0.05), ceil(7.5)) = 8
 
+**considering the replication x2:** = 16
 
 #### Reactions service
 
@@ -245,6 +250,8 @@ including AFR (1%): ~972GB
 
 **Disks** = max(ceil(0.01), ceil(0.01), ceil(0.25)) = 1
 
+**considering the replication x2:** = 2
+
 #### Subscriptions service
 
 ##### Traffic:
@@ -266,3 +273,4 @@ including AFR (1%): ~360GB
 
 **Disks** = max(ceil(0.01), ceil(0.01), ceil(0.12)) = 1
 
+**considering the replication x2:** = 2
