@@ -5,17 +5,22 @@ info:
 
 tags:
   - name: Media
-  - name: Locations
+    description: Service responsible for media-files persistence
   - name: Posts
+    description: Service responsible for posts and locations
+  - name: Reactions
+    description: Service responsible for posts' comments and rates
   - name: Subscriptions
+    description: Service responsible for user subscriptions
   - name: Feed
+    description: Service responsible for feed building and persistence
 
 paths:
   ### Media
   /media:
     post:
       operationId: uploadMedia
-      summary: Upload media file (photo)
+      summary: Upload media-file
       tags:
         - Media
       parameters:
@@ -64,13 +69,13 @@ paths:
         500:
           description: Server error
 
-  ### Locations
+  ### Posts
   /locations:
     get:
       operationId: listLocations
       summary: List Locations
       tags:
-        - Locations
+        - Posts
       parameters:
         - $ref: '#/components/parameters/MaxResults'
         - $ref: '#/components/parameters/Cursor'
@@ -90,9 +95,14 @@ paths:
       operationId: createLocations
       summary: Create Locations
       tags:
-        - Locations
+        - Posts
       parameters:
         - $ref: '#/components/parameters/IdempotenceKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LocationCreateRequest'
       responses:
         201:
           description: Created
@@ -114,7 +124,7 @@ paths:
       operationId: getLocation
       summary: Get Location details
       tags:
-        - Locations
+        - Posts
       parameters:
         - $ref: '#/components/parameters/Id'
       responses:
@@ -210,7 +220,7 @@ paths:
       operationId: savePostRate
       summary: Save Post Rate
       tags:
-        - Posts
+        - Reactions
       parameters:
         - $ref: '#/components/parameters/IdempotenceKey'
         - $ref: '#/components/parameters/Id'
@@ -259,7 +269,7 @@ paths:
       operationId: listPostComments
       summary: List Post's Comments
       tags:
-        - Posts
+        - Reactions
       parameters:
         - $ref: '#/components/parameters/Id'
         - $ref: '#/components/parameters/MaxResults'
@@ -334,7 +344,7 @@ paths:
 
     put:
       operationId: subscribe
-      summary: Subscribe
+      summary: Create Subscription
       tags:
         - Subscriptions
       parameters:
@@ -358,7 +368,7 @@ paths:
 
     delete:
       operationId: unsubscribe
-      summary: Unsubscribe
+      summary: Drop Subscription
       tags:
         - Subscriptions
       parameters:
