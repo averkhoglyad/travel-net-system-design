@@ -1,12 +1,6 @@
 // Use DBML to define your database structure
 // Docs: https://dbml.dbdiagram.io/docs
 
-Table media_metadata {
-  id bigint [primary key]
-  caption varchar(255)
-  post_id bigint
-}
-
 Table location {
   id bigint [primary key]
   caption varchar(255)
@@ -25,5 +19,12 @@ Table post {
   created_by bigint 
 }
 
+Table post_photo {
+  id bigint [primary key]
+  caption varchar(255)
+  media_id bigint
+  post_id bigint
+}
+
 Ref: post.location_id > location.id
-Ref: post.id < media_metadata.post_id
+Ref: post.id < post_photo.post_id
