@@ -6,11 +6,6 @@ Table subscription {
   subscribed_on bigint [primary key]
 }
 
-Table subscription {
-  subscribed_by bigint [primary key]
-  subscribed_on bigint [primary key]
-}
-
 Table user [note: 'For easy refreshing and calculation statistic and detecting celebrities'] {
   id bigint [primary key]
   total_subscriptions bigint
