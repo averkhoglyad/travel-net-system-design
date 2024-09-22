@@ -1,0 +1,16 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table subscription {
+  subscribed_by bigint [primary key]
+  subscribed_on bigint [primary key]
+}
+
+Table user [note: 'For easy refreshing and calculation statistic and detecting celebrities'] {
+  id bigint [primary key]
+  total_subscriptions bigint
+  total_followers bigint
+}
+
+Ref: subscription.subscribed_by > user.id
+Ref: subscription.subscribed_on > user.id
