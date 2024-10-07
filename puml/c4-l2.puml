@@ -1,0 +1,83 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!define COMMICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/v3.0.0/icons
+
+!include DEVICONS/postgresql.puml
+!include DEVICONS/redis.puml
+!include DEVICONS/mongodb.puml
+
+!include COMMICONS/common.puml
+!include COMMICONS/font-awesome-6/database.puml
+
+Person(user, 'User')
+Component(balancer, 'Load balancer')
+Component(gateway, 'API gateway')
+
+Rel(user, balancer, "", "")
+Rel(balancer, gateway, "", "")
+
+Boundary(media, "Media", "Media files storage") {
+    Container(media_service, 'Media Service', "application")
+    ContainerDb(media_storage, "Medias DB", "binary", "S3-like file storage", $sprite="database")
+    Rel(media_service, media_storage, "", "")
+}
+
+Boundary(posts, "Posts", "Posts and Locations") {
+    Container(post_service, 'Post Service', "application")
+    Container(post_arch_worker, 'Archiver', "cron-worker")
+    ContainerDb(posts_db_hot, "Posts DB (hot)", "document", "MongoDB", $sprite="mongodb")
+    ContainerDb(posts_db_cold, "Posts DB (cold)", "document", "MongoDB", $sprite="mongodb")
+    Rel(post_service, posts_db_hot, "", "")
+    Rel(post_service, posts_db_cold, "", "")
+    Rel(post_arch_worker, posts_db_hot, "", "")
+    Rel(post_arch_worker, posts_db_cold, "", "")
+}
+
+
+Boundary(reactions, "Reactions", "Comments and Rates") {
+    Container(reactions_service, 'Reactions Service', "application")
+    ContainerDb(reactions_db, "Reactions DB", "relational", "Postgresql", $sprite="postgresql")
+    Rel(reactions_service, reactions_db, "", "")
+}
+
+
+Boundary(subscriptions, "Subscriptions") {
+    Container(subscriptions_service, 'Subscriptions Service', "application")
+    ContainerDb(subscriptions_db, "Subscriptions DB", "relational", "Postgresql", $sprite="postgresql")
+    Rel(subscriptions_service, subscriptions_db, "", "")
+}
+
+
+Boundary(feeds, "Feeds") {
+    Container(feed_service, 'Feed Service', "application")
+    ContainerDb(feed_db, "Feed DB", "in-memory", "Redis", $sprite="redis")
+    Rel(feed_service, feed_db, "", "")
+}
+
+
+ContainerQueue(post_media_queue, "Post-Media Queue", "Kafka", $sprite='apachekafka')
+ContainerQueue(posts_queue, "Posts Queue", "Kafka")
+ContainerQueue(subscriptions_queue, "Subscriptions Queue", "Kafka")
+ContainerQueue(reactions_queue, "Reactions Queue", "Kafka")
+
+Rel(gateway, media_service, "", "")
+Rel(gateway, post_service, "", "")
+Rel(gateway, reactions_service, "", "")
+Rel(gateway, subscriptions_service, "", "")
+Rel(gateway, feed_service, "", "")
+
+Rel(post_service, post_media_queue, "", "")
+Rel(media_service, post_media_queue, "", "")
+Rel(reactions_service, posts_queue, "", "")
+Rel(post_service, posts_queue, "", "")
+Rel(reactions_service, reactions_queue, "", "")
+Rel(post_service, reactions_queue, "", "")
+
+Rel(subscriptions_service, subscriptions_queue, "", "")
+Rel(feed_service, subscriptions_queue, "", "")
+Rel(feed_service, posts_queue, "", "")
+Rel(feed_service, post_service, "Get Posts when user feed is empty", "sync")
+
+@enduml

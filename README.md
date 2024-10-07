@@ -23,6 +23,47 @@ Travel Social Net is a social network for travelers.
 	- each 100th user write a new post with ~5 photos (max 1 second for write operations and 1 sec for every image upload)
 	- each 1000th user register a new location
 
+## Design overview
+
+### Level 1. High level design
+![High level design](/puml/c4-l1.png "High level design")
+
+We assume that user registration is out of our current implementation. 
+It could be used ready-made implementation of the SSO service (e.g. Keycloak) or third-party openid auth service (e.g. VK-ID or Yandex-Passport).
+
+### Level 2. Subsystems design
+![Subsystems design](/puml/c4-l2.png "Subsystems design")
+
+### Critical flows and subsystem details
+
+#### Create Post
+![Create Post](/puml/c4-l2-create_post.png "Create Post")
+
+User's client upload images to the media service first with expiration date +1 day. File storage will remove file automatically if expiration date will be still defined 
+(e,g, if creation will be interrupted or failed). Next client call post create method. On successful creation post service notify media service to remove expiration date.
+We are using MongoDB to persist Posts because there isn't complicated and tricky relations, no need in the strict transactions and it's easier to keep photos as 
+the inner nested array of the media details. We assume that 80% of the posts users view are not older than 2 months. So posts younger than 2 monthes are kept in the hot fast
+db and after the 2 monthes they will be removed from the hot db and persisted in the cold db.
+
+#### Comments and Rates
+![Comments and Rates](/puml/c4-l2-post_reactions.png "Comments and Rates")
+
+User can write comments and rate posts and reactions service is responsible for this functionality (it could be devided into separated services but I didn't find the reason for now).
+Rates are persisted and requested from posts so it's not needed to update rate in the feed on any reaction. Reaction service notify psot service about avarage rate updates through
+message queue. It could be aggregated and debounced.
+
+#### Subscription
+![Subscription](/puml/c4-l2-subscriptions.png "Subscription")
+
+Subscription service keep user-to-user subscriptions and statistics how many users has subscriptions and followers. THis information is used to detect celebrities.
+
+#### Feed
+![Feed](/puml/c4-l2-feed.png "Feed")
+
+Feed service is responsible for building user's feeds. Feed service keeps full posts for every feed. Celebrity users' posts are kept as the separated list,
+service mixes them in the prepared feed in the runtime. We assume that 80% users view less than 50 posts in the feed, if user try to read more, feed service 
+requests the post service for older posts. Feed service rebuild feeds on every subscription and post creation, so it's easier to use in-memory DB like Redis.
+
 ## Basic calculations
 
 ### Entities
