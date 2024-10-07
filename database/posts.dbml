@@ -1,5 +1,8 @@
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
+// Replication:
+// - async master-slave
+// - replication factor 2
+// Sharding
+// - key based by user id
 
 Table location {
   id bigint [primary key]

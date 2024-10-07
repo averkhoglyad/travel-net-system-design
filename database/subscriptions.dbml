@@ -1,5 +1,8 @@
-// Use DBML to define your database structure
-// Docs: https://dbml.dbdiagram.io/docs
+// Replication:
+// - async master-slave
+// - replication factor 2
+// Sharding
+// - key based by subscriber id
 
 Table subscription {
   subscribed_by bigint [primary key]

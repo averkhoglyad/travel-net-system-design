@@ -1,1 +1,6 @@
 // S3-like binary storage
+// Replication:
+// - async master-slave
+// - replication factor 2
+// Sharding
+// - key based by id
